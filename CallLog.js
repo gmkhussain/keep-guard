@@ -9,34 +9,20 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import CallLogs from 'react-native-call-log'; // <<<<< THIS IS THE FIX
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCallLogs } from './src/redux/actions/index.js';
+
 
 
 const CallLogsView = () => {
-  const [logs, setLogs] = useState([]);
-
-  const loadCallLogs = async () => {
-    if (Platform.OS !== 'android') {
-      Alert.alert('Not supported on iOS');
-      return;
-    }
-
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_CALL_LOG
-    );
-
-    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      Alert.alert('Permission denied');
-      return;
-    }
-
-    try {
-      const data = await CallLogs.loadAll();
-      setLogs(data.slice(0, 10)); // first 10 logs
-    } catch (error) {
-      Alert.alert('Error', error.message);
-    }
-  };
+  // const [logs, setLogs] = useState([]);
+  
+    const dispatch = useDispatch();
+    const callLogs = useSelector((state) => state.userReducer.callLogs);
+      
+  const loadCallLogs = () => {
+    dispatch(fetchCallLogs());
+  }
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
@@ -54,7 +40,7 @@ const CallLogsView = () => {
       <Button title="Load Call Logs" onPress={loadCallLogs} />
 
       <FlatList
-        data={logs}
+        data={callLogs}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         style={{ marginTop: 16 }}

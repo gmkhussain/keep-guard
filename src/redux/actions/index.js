@@ -1,12 +1,13 @@
 import { Platform, PermissionsAndroid, Alert } from 'react-native';
 import Contacts from 'react-native-contacts';
+import CallLogs from 'react-native-call-log';
 
 export const SET_CONTACTS = 'SET_CONTACTS';
+export const SET_CALL_LOGS = 'SET_CALL_LOGS';
 
-// redux-thunk style: returns a function that receives dispatch
+
 export const fetchContacts = () => async (dispatch) => {
   try {
-    // Android permissions
     if (Platform.OS === 'android') {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_CONTACTS
@@ -17,16 +18,48 @@ export const fetchContacts = () => async (dispatch) => {
         return;
       }
     }
-
-    // Fetch contacts
     const allContacts = await Contacts.getAll();
-
-    // Dispatch to store
-    dispatch({
-      type: SET_CONTACTS,
-      payload: allContacts,
-    });
+    dispatch({ type: SET_CONTACTS, payload: allContacts });
+    
   } catch (e) {
     Alert.alert('Error', e.message);
+  }
+};
+
+
+
+
+export const fetchCallLogs = () => async (dispatch) => {
+  if (Platform.OS !== 'android') {
+    Alert.alert('Not supported on iOS');
+    return;
+  }
+
+  // Request call log permission
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+    {
+      title: 'Call Log Permission',
+      message: 'This app needs access to your call logs.',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    }
+  );
+
+  if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+    Alert.alert('Permission denied', 'Cannot access call logs.');
+    return;
+  }
+
+  try {
+    const logs = await CallLogs.loadAll();
+
+    dispatch({
+      type: SET_CALL_LOGS,
+      payload: logs.slice(0, 10),
+    });
+  } catch (error) {
+    Alert.alert('Error fetching call logs', error.message);
   }
 };
