@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import CallLogs from './CallLog';
 import ContactList from './ContactList';
+import MessagesView from './MessagesView';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +25,10 @@ export default function App() {
         <Tab.Screen
           name="Contacts"
           component={ContactList}
+        />
+        <Tab.Screen
+          name="Messages"
+          component={MessagesView}
         />
       </Tab.Navigator>
     </NavigationContainer>
