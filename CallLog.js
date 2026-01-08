@@ -41,10 +41,10 @@ const CallLogsView = () => {
   const renderItem = ({ item }) => (
     <View style={styles.item}>
       <Text style={styles.number}>{item.phoneNumber}</Text>
-      <Text>Type: {item.type}</Text>
-      <Text>Duration: {item.duration}s</Text>
-      <Text>
-        Date: {new Date(item.timestamp).toLocaleString()}
+      <Text style={styles.type}>Type: {item.type}</Text>
+      <Text style={styles.duration}>Duration: {item.duration}s</Text>
+      <Text style={styles.date}>        
+        Date: {new Date(item.timestamp * 1000).toLocaleString()}
       </Text>
     </View>
   );
@@ -69,14 +69,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    color: 'black',
   },
   item: {
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderColor: '#ddd',
+    color: 'black',
   },
   number: {
     fontSize: 16,
     fontWeight: '600',
+    color: 'black',
+  },
+  date: {
+    color: 'black',
+  }, 
+  type: {
+    color: 'black',
+  },
+  duration: {
+    color: 'black',
   },
 });

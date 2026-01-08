@@ -28,7 +28,7 @@ const ContactList = () => {
 
     try {
       const allContacts = await Contacts.getAll();
-      setContacts(allContacts.slice(0, 10)); // first 10 contacts
+      setContacts(allContacts.slice(0, 20));
     } catch (e) {
       Alert.alert('Error', e.message);
     }
@@ -74,11 +74,13 @@ const styles = StyleSheet.create({
   contactItem: {
     paddingVertical: 10,
     borderBottomWidth: 1,
+    color: 'black',
     borderColor: '#ddd',
   },
   name: {
     fontSize: 16,
     fontWeight: '600',
+    color: 'black',
   },
   phone: {
     fontSize: 14,

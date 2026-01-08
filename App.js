@@ -1,21 +1,33 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import CallLogs from './CallLog';
 import ContactList from './ContactList';
 
+const Tab = createBottomTabNavigator();
+
 export default function App() {
   return (
-    <View style={styles.container}>
-      <CallLogs />
-      <ContactList />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarLabelStyle: { fontSize: 14 },
+        }}
+      >
+        <Tab.Screen
+          name="Calls"
+          component={CallLogs}
+        />
+        <Tab.Screen
+          name="Contacts"
+          component={ContactList}
+        />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 60,
-    padding: 16,
-  },
-});
+const styles = StyleSheet.create({});
