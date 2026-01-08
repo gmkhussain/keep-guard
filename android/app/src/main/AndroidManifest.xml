@@ -9,6 +9,9 @@
 
     <uses-permission android:name="android.permission.READ_SMS"/>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -28,5 +31,12 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <service
+        android:name="com.asterinet.react.bgactions.BackgroundService"
+        android:foregroundServiceType="connectedDevice|location" />
+
     </application>
+
+    
 </manifest>
