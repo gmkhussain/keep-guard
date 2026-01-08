@@ -1,66 +1,87 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Button, Text, FlatList, StyleSheet, Alert } from 'react-native';
-import * as Contacts from 'react-native-contacts';
+import {
+  View,
+  Button,
+  Alert,
+  PermissionsAndroid,
+  Platform,
+  Text,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
+import Contacts from 'react-native-contacts';
 
-const App = () => {
+export default function App() {
   const [contacts, setContacts] = useState([]);
 
-  const getContacts = async () => {
-    if (!Contacts || !Contacts.checkPermission) {
-      Alert.alert('Error', 'Contacts module not available.');
-      return;
+  const testContacts = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
+      );
+
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert('Permission denied');
+        return;
+      }
     }
 
     try {
-      const permission = await Contacts.checkPermission();
-      if (permission === 'undefined') {
-        const p = await Contacts.requestPermission();
-        if (p !== 'authorized') return;
-      } else if (permission !== 'authorized') {
-        Alert.alert('Permission denied', 'Cannot access contacts.');
-        return;
-      }
-
-      const contactsList = await Contacts.getAll();
-      setContacts(contactsList);
-    } catch (err) {
-      console.log(err);
-      Alert.alert('Error', 'Failed to fetch contacts.');
+      const allContacts = await Contacts.getAll();
+      setContacts(allContacts.slice(0, 10)); // first 10 contacts
+    } catch (e) {
+      Alert.alert('Error', e.message);
     }
   };
 
-  const renderContact = ({ item }) => (
-    <View style={styles.contactCard}>
-      <Text style={{ fontWeight: 'bold' }}>{item.givenName} {item.familyName}</Text>
-      {item.phoneNumbers.map((p, i) => (
-        <Text key={i}>{p.label}: {p.number}</Text>
-      ))}
+  const renderItem = ({ item }) => (
+    <View style={styles.contactItem}>
+      <Text style={styles.name}>
+        {item.givenName} {item.familyName}
+      </Text>
+      {item.phoneNumbers?.[0] && (
+        <Text style={styles.phone}>
+          {item.phoneNumbers[0].number}
+        </Text>
+      )}
     </View>
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, padding: 20 }}>
-      <Text style={styles.title}>Keep Guard</Text>
-      <Button title="Get Contacts" onPress={getContacts} />
+    <View style={styles.container}>
+      <Button title="Get Contacts" onPress={testContacts} />
+
       <FlatList
         data={contacts}
-        keyExtractor={(item, index) => item.recordID ?? index.toString()}
-        renderItem={renderContact}
-        style={{ marginTop: 20 }}
+        keyExtractor={(item) => item.recordID}
+        renderItem={renderItem}
+        style={styles.list}
+        showsVerticalScrollIndicator={true}
       />
-    </SafeAreaView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 20
+  container: {
+    flex: 1,              // 🔑 required for scrolling
+    marginTop: 60,
+    padding: 16,
   },
-  contactCard: {
-    padding: 10,
+  list: {
+    marginTop: 16,
+  },
+  contactItem: {
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  phone: {
+    fontSize: 14,
+    color: '#555',
   },
 });
-
-export default App;
