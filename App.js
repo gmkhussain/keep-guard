@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import Contacts from 'react-native-contacts';
+import CallLogs from './CallLog';
 
 export default function App() {
   const [contacts, setContacts] = useState([]);
@@ -49,6 +50,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <CallLogs />
       <Button title="Get Contacts" onPress={testContacts} />
 
       <FlatList
