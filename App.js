@@ -1,5 +1,7 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import { StyleSheet } from 'react-native';
+import { store } from './src/redux/store.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -7,10 +9,13 @@ import CallLogs from './CallLog';
 import ContactList from './ContactList';
 import MessagesView from './MessagesView';
 
+    
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
+    <Provider store={store}>  
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
@@ -32,6 +37,7 @@ export default function App() {
         />
       </Tab.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }
 

@@ -10,29 +10,18 @@ import {
   StyleSheet,
 } from 'react-native';
 import Contacts from 'react-native-contacts';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts } from './src/redux/actions/index.js';
 
 const ContactList = () => {
-  const [contacts, setContacts] = useState([]);
 
-  const loadContacts = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
-      );
-
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert('Permission denied');
-        return;
-      }
-    }
-
-    try {
-      const allContacts = await Contacts.getAll();
-      setContacts(allContacts.slice(0, 20));
-    } catch (e) {
-      Alert.alert('Error', e.message);
-    }
-  };
+    const dispatch = useDispatch();
+    const contacts = useSelector((state) => state.userReducer.contacts);
+      
+  const loadContacts = () => {
+    console.log('loadContacts');
+    dispatch(fetchContacts());
+  }
 
   const renderItem = ({ item }) => (
     <View style={styles.contactItem}>
